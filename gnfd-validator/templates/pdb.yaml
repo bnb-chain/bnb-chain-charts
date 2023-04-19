@@ -1,0 +1,9 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "gnfd-validator.fullname" . }}-validator
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      {{- include "gnfd-validator.selectorLabels" . | nindent 6 }}

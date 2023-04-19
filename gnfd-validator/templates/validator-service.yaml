@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  name: {{ include "gnfd-validator.fullname" . }}-validator
+  labels:
+    {{- include "gnfd-validator.labels" . | nindent 4 }}
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 9090
+    targetPort: 9090
+    name: grpc
+  - port: 26657
+    targetPort: 26657
+    name: http
+  - port: 26656
+    targetPort: 26656
+    name: p2p
+  - port: 8545
+    targetPort: 8545
+    name: rpc
+  - port: 1317
+    targetPort: 1317
+    name: api
+  - port: 26660
+    targetPort: 26660
+    name: metrics
+  selector:
+    {{- include "gnfd-validator.selectorLabels" . | nindent 4 }}

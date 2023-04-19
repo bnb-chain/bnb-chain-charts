@@ -1,0 +1,270 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "gnfd-validator.fullname" . }}-validator
+  labels:
+    {{- include "gnfd-validator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      {{- include "gnfd-validator.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "gnfd-validator.fullname" . }}-validator
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gnfd-validator.selectorLabels" . | nindent 8 }}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: "karpenter.k8s.aws/instance-family"
+                  operator: "In"
+                  values: ["m6i","r6i"]
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - gnfd
+              topologyKey: topology.kubernetes.io/zone
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: "app"
+                  operator: In
+                  values:
+                  - gnfd
+            topologyKey: "kubernetes.io/hostname"
+      tolerations:
+        - key: provisioner-type
+          operator: Equal
+          value: high-memory
+          effect: NoSchedule
+      serviceAccountName: {{ include "gnfd-validator.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - configMap:
+            defaultMode: 0777
+            name: {{ include "gnfd-validator.fullname" . }}-config
+          name: gnfd-validator-config
+        - name: private-key
+          secret:
+            defaultMode: 420
+            secretName: {{ include "gnfd-validator.fullname" . }}-private-key
+      terminationGracePeriodSeconds: 300
+      {{- if .Values.genesisInit.enabled }}
+      initContainers:
+        - name: init-genesis
+          image: "{{ .Values.alpineImage.repository }}:{{ .Values.alpineImage.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+          - /bin/sh
+          args:
+          - -c
+          - |
+            if [ -d "/server/data-seed/config/priv_validator_key.json" ]; then
+              echo "genesis already exist."
+              exit 0
+            fi
+            mkdir -p /server/data-seed/data
+            mkdir -p /server/data-seed/config
+            ls -ltr /config-tmp
+            cp -rf -L /config-tmp/* /server/data-seed/config || true
+            cp -rf -L /private-key/{{ include "gnfd-validator.fullname" . }}-private-key /server/data-seed/config/priv_validator_key.json
+            echo '{}' > /server/data-seed/data/priv_validator_state.json || true
+            echo "done"
+          volumeMounts:
+          - name: data
+            mountPath: /server
+          - name: gnfd-validator-config
+            mountPath: /config-tmp
+          - name: private-key
+            mountPath: /private-key
+      {{- end }}
+      containers:
+        {{- if .Values.EnableDiskWarmUp }}
+        - name: ebs-init-sidecar
+          image: "{{ .Values.alpineImage.repository }}:{{ .Values.alpineImage.tag }}"
+          imagePullPolicy: {{ .Values.alpineImage.pullPolicy }}
+          securityContext:
+            privileged: true
+          command:
+          - /bin/sh
+          args:
+          - -c
+          - |
+            # Init EBS volume
+            RUN_INIT=true
+
+            if [ -f /server1/init_done.log ]; then
+              if [ $(cat /server1/init_done.log) = $POD_NAME ]; then
+                RUN_INIT=false
+              fi
+            fi
+
+            apk add fio findutils
+
+            if [ $RUN_INIT = true ]; then
+              echo "EBS not init yet, initializing..."
+              FILES=$(find /server1/data-seed/geth/chaindata/ -type f -printf '%T@ %p\n' | sort -k 1nr | sed 's/^[^ ]* //')
+              N=$(echo "$FILES" | wc -l)
+              for file in $FILES; do
+                echo "Processing file: $file"
+                dd if=$file of=/dev/null bs=1M &
+                N=$((N-1))
+                echo "There're $N files left..."
+                if [ $(( $N % 100 )) -eq 0 ]; then
+                  wait
+                fi
+              done
+              echo "Initialization completed."
+              echo $POD_NAME > /server1/init_done.log
+            else
+              echo "EBS already init. No action taken."
+            fi
+
+            while true;do
+              sleep 60
+            done
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+          - name: data
+            mountPath: /server1
+          resources:
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+        {{- end }}
+        - name: greenfield
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+          - /bin/sh
+          args:
+          - -c
+          - |
+            sleep 10
+            exec /app/gnfd start --home /server/data-seed/
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: GOGC
+            value: "65"
+          - name: CGO_CFLAGS
+            value: "-O -D__BLST_PORTABLE__"
+          - name: CGO_CFLAGS_ALLOW
+            value: "-O -D__BLST_PORTABLE__"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+          - name: data
+            mountPath: /server
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- if .Values.enableLivenessProbe }}
+          livenessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - /server/config/liveness-check.sh
+            failureThreshold: 1
+            successThreshold: 1
+            periodSeconds: 900
+            initialDelaySeconds: 900
+          {{- end }}
+          {{- if .Values.enableStartupProbe }}
+          startupProbe:
+            exec:
+              command:
+              - /bin/sh
+              - /server/config/startup-check.sh
+            failureThreshold: 120
+            periodSeconds: 30
+          {{- end }}
+          ports:
+          - name: http
+            containerPort: 26657
+            protocol: TCP
+          - name: abci
+            containerPort: 26658
+            protocol: TCP
+          - name: udp
+            containerPort: 26656
+            protocol: UDP
+          - name: tcp
+            containerPort: 26656
+            protocol: TCP
+          - containerPort: 8545
+            name: rpc
+          - containerPort: 26660
+            name: metrics
+          - containerPort: 1317
+            name: api
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.awsHostNetworkEnabled }}
+      hostNetwork: true
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  updateStrategy:
+    rollingUpdate:
+      partition: {{ .Values.rollingUpdatePartition }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      {{- with .Values.pvcAutoresizer.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}      
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.storageClassName }}
+      resources:
+        requests:
+          storage: {{ .Values.volumeSize }}
+      {{- if .Values.enableInitEbsSnapshot }}
+      dataSource:
+        name: {{ include "gnfd-validator.fullname" . }}-volume-snapshot
+        kind: VolumeSnapshot
+        apiGroup: snapshot.storage.k8s.io
+      {{- end }}

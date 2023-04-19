@@ -1,0 +1,12 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: {{ include "gnfd-validator.fullname" . }}-validator
+spec:
+  endpoints:
+    - interval: 10s
+      port: metrics
+      path: /metrics
+  selector:
+    matchLabels:
+      {{- include "gnfd-validator.selectorLabels" . | nindent 6 }}
