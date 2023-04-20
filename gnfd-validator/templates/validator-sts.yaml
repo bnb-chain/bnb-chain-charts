@@ -32,7 +32,7 @@ spec:
             defaultMode: 0777
             name: {{ include "gnfd-validator.fullname" . }}-config
           name: gnfd-validator-config
-        {{- if .Values.secretStoreRef.enable }}
+        {{- if .Values.enablesecretStore }}
         - name: private-key
           secret:
             defaultMode: 420
@@ -65,7 +65,7 @@ spec:
             mountPath: /server
           - name: gnfd-validator-config
             mountPath: /config-tmp
-          {{- if .Values.secretStoreRef.enable }}
+          {{- if .Values.enablesecretStore }}
           - name: private-key
             mountPath: /private-key
           {{- end }}
