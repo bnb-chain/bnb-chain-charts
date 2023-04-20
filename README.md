@@ -6,7 +6,7 @@ It is a BNB Chain charts repository. So far, it is private helm chart repo. To u
 ## Add a repo
 
 ```
-❯ helm repo add bnb-chain --username "$PAT_TOKEN" --password "$PAT_TOKEN" https://raw.githubusercontent.com/bnb-chain/bnb-chain-charts/gh-pages
+❯ helm repo add bnb-chain https://chart.bnbchain.world/
 
 "bnb-chain" has been added to your repositories
 ```
