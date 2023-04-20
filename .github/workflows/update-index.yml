@@ -26,8 +26,8 @@ jobs:
       - name: Update Index
         run: |
           helm repo index .
-          git config --global user.email "noreply@binance.com"
-          git config --global user.name "Binance Bot"
+          git config --global user.email "noreply@github.com"
+          git config --global user.name "BNB-Chain Bot"
           git add index.yaml
           git commit -m "Update chart index from ref: $GITHUB_SHA"
           git push
