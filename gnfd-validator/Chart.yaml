@@ -1,0 +1,7 @@
+apiVersion: v2
+name: gnfd-validator
+description: A Helm chart for gnfd validator
+
+type: application
+
+version: 0.0.1
