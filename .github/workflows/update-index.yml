@@ -1,0 +1,33 @@
+name: Update Helm Charts Index
+
+on:
+  push:
+    branches:
+      - gh-pages
+    paths-ignore:
+      - 'README.md'
+      - 'index.yaml'
+      - '.github/**'
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Git Checkout
+        uses: actions/checkout@v2
+
+      - name: Helm Installation
+        uses: azure/setup-helm@v1.1
+        with:
+          version: v3.7.0
+
+      - name: Update Index
+        run: |
+          helm repo index .
+          git config --global user.email "noreply@binance.com"
+          git config --global user.name "Binance Bot"
+          git add index.yaml
+          git commit -m "Update chart index from ref: $GITHUB_SHA"
+          git push
