@@ -102,9 +102,8 @@ serviceAccount:
   name: ""
 
 configPath: "a-config/config/*"
-
+enablesecretStore: false
 secretStoreRef:
-  enable: false
   name: "bnbchain-secrets"
   kind: "SecretStore"
 service:
