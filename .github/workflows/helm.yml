@@ -1,0 +1,71 @@
+name: Package and Publish Helm Charts
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: main
+          fetch-depth: 0
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: charts
+          ref: 'gh-pages'
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Determine which charts were changed
+        working-directory: main
+        id: get_chart_names
+        run: |
+          # Get the list of files that were modified in the commit
+          files_changed=$(git diff --name-only HEAD~1 HEAD)
+
+          # Loop through each chart folder and check if any files in the folder were modified
+          for chart_folder in $(ls -d */); do
+            chart_files=$(echo $files_changed | grep -c "^$chart_folder")
+            if [ "$chart_files" -gt "0" ]; then
+              # Print the chart name so we can see which charts were modified
+              echo "Modified chart: $chart_folder"
+              # Append the chart name to the list of modified charts
+              echo $chart_folder >> modified_charts.txt
+            fi
+          done
+
+          # Set an output variable with the list of modified charts
+          echo "::set-output name=modified_charts::$(cat modified_charts.txt)"
+
+      - name: Package charts
+        working-directory: main
+        if: steps.get_chart_names.outputs.modified_charts != ''
+        run: |
+          mkdir -p ~/tmp
+          modified_charts=${{ steps.get_chart_names.outputs.modified_charts }}
+          for chart_name in $modified_charts; do
+            helm package "$chart_name" -u -d ~/tmp
+          done
+
+      - name: Publish charts
+        working-directory: charts
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}  
+        run: |
+            mv ~/tmp/*.tgz .
+            git add .
+            git config --global user.email "noreply@binance.com"
+            git config --global user.name "Binance Bot"
+            git commit -m "Updated from ref: $GITHUB_SHA"
+            git push https://${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
