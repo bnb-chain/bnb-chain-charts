@@ -2,7 +2,16 @@ apiVersion: v1
 entries:
   gnfd-validator:
   - apiVersion: v2
-    created: "2023-04-20T13:44:58.487447082Z"
+    created: "2023-04-20T16:13:01.851909548Z"
+    description: A Helm chart for gnfd validator
+    digest: c02e0a1088dac27193aec5793890d4f2bc5cf224589836cb519459a34a0aeb91
+    name: gnfd-validator
+    type: application
+    urls:
+    - gnfd-validator-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    created: "2023-04-20T16:13:01.850586742Z"
     description: A Helm chart for gnfd validator
     digest: 69c3087bdb745f54fac17d995f9e9850c27f056bf68cf1cd0907bd2e84dc47eb
     name: gnfd-validator
@@ -10,4 +19,4 @@ entries:
     urls:
     - gnfd-validator-0.0.1.tgz
     version: 0.0.1
-generated: "2023-04-20T13:44:58.486571467Z"
+generated: "2023-04-20T16:13:01.848815834Z"
