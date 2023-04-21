@@ -101,6 +101,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+enableConfigMapInit: false
 configPath: "a-config/config/*"
 enablesecretStore: false
 secretStoreRef:
