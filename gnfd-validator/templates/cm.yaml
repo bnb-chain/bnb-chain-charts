@@ -1,3 +1,4 @@
+{{- if .Values.enableConfigMapInit -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,3 +7,4 @@ metadata:
     {{- include "gnfd-validator.labels" . | nindent 4 }}
 data:
 {{ (.Files.Glob .Values.configPath).AsConfig | indent 2 }}
+{{- end }}
