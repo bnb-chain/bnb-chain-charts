@@ -1,6 +1,13 @@
 # geenfield-validator-charts
 Helm chart repository for the greenfield-validator
 
+## To deploy:
+1. `helm repo add bnb-chain https://chart.bnbchain.world/`
+2. `helm repo update`
+3. `helm install greenfield-validator bnb-chain/gnfd-validator`
+
+`greenfield-validator` will be your `<RELEASE_NAME>`
+
 ## To note:
 Please ensure you have VMServiceScrape CRD installed in your cluster, else, the helm chart cannot install and deploy the resources below into your cluster.
 
