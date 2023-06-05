@@ -34,14 +34,13 @@ enableMonitor: false
 enableStartupProbe: false
 enableLivenessProbe: true
 
-readinessProbe: {}
-  # exec:
-  #   command:
-  #   - uname
-  # failureThreshold: 1
-  # successThreshold: 1
-  # periodSeconds: 10
-  # initialDelaySeconds: 10
+readinessProbe:
+  exec:
+    command:
+    - sh
+    - -c
+    - "result=$(curl -sS -o /dev/null -w '%{http_code}' https://gnfd-testnet-fullnode-tendermint-us.bnbchain.org/abci_info); if [ $result -eq 200 ]; then response=$(curl -s https://gnfd-testnet-fullnode-tendermint-us.bnbchain.org/abci_info); last_block_height=$(echo $response | jq -r '.result.response.last_block_height'); if [ -n \"$last_block_height\" ]; then exit 0; else exit 1; fi; else exit 1; fi"
+  failureThreshold: 1
 
 resources:
   limits:
