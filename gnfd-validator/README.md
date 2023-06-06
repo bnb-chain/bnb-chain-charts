@@ -6,38 +6,23 @@ Helm chart repository for the greenfield-validator
 2. `helm repo update`
 3. `helm install greenfield-validator bnb-chain/gnfd-validator`
 
-`greenfield-validator` will be your `<RELEASE_NAME>`
-
 ## To note:
-Please ensure you have VMServiceScrape CRD installed in your cluster, else, the helm chart cannot install and deploy the resources below into your cluster.
 
-## Resource Descriptions
+Please refer to the `values.yaml` description section in case of any error faced in step 3 above.
 
-Below is a list of the Kubernetes resources created by this helm chart.
+Please also ensure you have VMServiceScrape CRD installed in your cluster, else, the helm chart cannot install and deploy the resources below into your cluster.
 
-The resources created by this helm chart will be prefixed with the helm release name. Below, they are denoted by the `<RELEASE_NAME>` prefix.
+## `values.yaml` Description
 
-StatefulSet:
-* `<RELEASE_NAME>-validator` - The validator StatefulSet
+Our image is pulled from `ghcr.io/bnb-chain/greenfield`. Using other images could lead to an error.
 
-Services:
-* `<RELEASE_NAME>-validator` - The validator Service
+Our `storageClassName` is `ebs-sc`, with a `volumeSize` of `500Gi`.
 
-ConfigMaps:
-* `<RELEASE_NAME>-nodekey` - The validator nodekey
-* `<RELEASE_NAME>-config` - The validator configuration
+We get the genesis file for greenfield from the `url` stated under `genesisInit`. You have to change the `url` if a new genesis file is uploaded.
 
-Secrets:
-* `<RELEASE_NAME>-private-key` - The validator private-key, it is an ExternalSecret
+The `podSecurityContext` and the `securityContext` used help to prevent any internal file system modifications as it prevent root user permissions.
 
-Ingress:
-* `<RELEASE_NAME>-ingress` - The validator ingress, which controls network access to the validator pods
-
-ServiceMonitor:
-* `<RELEASE_NAME>-validator` - The validator ServiceMonitor
-
-PodDisruptionBudget:
-* `<RELEASE_NAME>-validator` - The PodDisruptionBudget for validator
+At the very end, there is an option to `enableConfigMapInit`, this config refers to the `configPath` in the [repo where the genesis document is provided](https://github.com/bnb-chain/bnbchain-gitops/tree/main/apps/gnfd-validator-qa). Change the `configPath` if necessary.
 
 ## Common Operations
 
@@ -47,22 +32,17 @@ PodDisruptionBudget:
 $ kubectl get pod
 ```
 
-You should see at least `1/1` pod running for the validator. If there are any restarts, you should see it in this view.
+You should see a `2/2` pod running for the validator. This means there are 2 containers running for the validator.
 
-To see more details about a singular pod, you can describe it:
-
-```
-$ kubectl describe pod <POD_NAME>
-```
-
-### Check the Pod Logs
+To see more details about a pod, you can describe it:
 
 ```
-$ kubectl logs <POD_NAME>
+$ kubectl describe pod <POD_NAME> 
 ```
 
-### Check all services
+### Check the Pod Logs 
 
 ```
-$ kubectl get services
+$ kubectl logs <POD_NAME> -c <CONTAINER_NAME>
 ```
+

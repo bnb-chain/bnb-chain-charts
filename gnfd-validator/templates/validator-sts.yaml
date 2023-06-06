@@ -26,12 +26,12 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.securityContext | nindent 8 }}
       volumes:
         - configMap:
             defaultMode: 0777
             name: {{ include "gnfd-validator.fullname" . }}-config
-          name: gnfd-validator-config
+          name: {{ .Release.Name }}-gnfd-validator-config
         {{- if .Values.enablesecretStore }}
         - name: private-key
           secret:
@@ -49,21 +49,22 @@ spec:
           args:
           - -c
           - |
-            if [ -d "/server/data-seed/config/priv_validator_key.json" ]; then
+            if [ -f "/server/data-seed/config/priv_validator_key.json" ]; then
               echo "genesis already exist."
               exit 0
             fi
             mkdir -p /server/data-seed/data
             mkdir -p /server/data-seed/config
+            wget -O /server/data-seed/config/genesis.json {{ .Values.genesisInit.url }}
             ls -ltr /config-tmp
             cp -rf -L /config-tmp/* /server/data-seed/config || true
-            cp -rf -L /private-key/{{ include "gnfd-validator.fullname" . }}-private-key /server/data-seed/config/priv_validator_key.json
+            cp -rf -L /private-key/{{ .Release.Name }}-gnfd-validator-private-key /server/data-seed/config/priv_validator_key.json
             echo '{}' > /server/data-seed/data/priv_validator_state.json || true
             echo "done"
           volumeMounts:
           - name: data
             mountPath: /server
-          - name: gnfd-validator-config
+          - name: {{ .Release.Name }}-gnfd-validator-config
             mountPath: /config-tmp
           {{- if .Values.enablesecretStore }}
           - name: private-key
@@ -136,7 +137,6 @@ spec:
           args:
           - -c
           - |
-            sleep 10
             exec /app/gnfd start --home /server/data-seed/
           env:
           - name: POD_NAME
@@ -156,7 +156,7 @@ spec:
           - name: CGO_CFLAGS_ALLOW
             value: "-O -D__BLST_PORTABLE__"
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
           volumeMounts:
           - name: data
             mountPath: /server
