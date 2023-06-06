@@ -4,9 +4,9 @@ rollingUpdatePartition: 0
 awsHostNetworkEnabled: true
 
 image:
-  repository: "ankrnetwork/bas-template-bsc"
+  repository: "ghcr.io/bnb-chain/greenfield"
   pullPolicy: IfNotPresent
-  tag: "devel"
+  tag: "0.2.2-alpha.1"
 
 alpineImage:
   repository: "alpine"
@@ -23,9 +23,8 @@ initSnapshotId: ""
 storageClassName: "ebs-sc"
 
 genesisInit:
-  enabled: false
-  url: https://github.com/binance-chain/bsc/releases/download/v1.1.2/mainnet.zip
-
+  enabled: true
+  url: "https://raw.githubusercontent.com/bnb-chain/bnbchain-gitops/main/apps/gnfd-fullnode-qa/config/genesis.json?token=GHSAT0AAAAAACCKFFJM72XFB5VLRLN7LPTOZD67ODA"
 
 # enable ServiceMonitor resources
 enableMonitor: false
@@ -34,14 +33,14 @@ enableMonitor: false
 enableStartupProbe: false
 enableLivenessProbe: true
 
-readinessProbe: {}
-  # exec:
-  #   command:
-  #   - uname
-  # failureThreshold: 1
-  # successThreshold: 1
-  # periodSeconds: 10
-  # initialDelaySeconds: 10
+readinessProbe:
+  exec:
+   command:
+   - uname
+  failureThreshold: 1
+  successThreshold: 1
+  periodSeconds: 10
+  initialDelaySeconds: 10
 
 resources:
   limits:
@@ -72,21 +71,24 @@ affinity: {}
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  allowPrivilegeEscalation: false 
+  readOnlyRootFilesystem: true 
+  capabilities:
+    drop:
+      - all
 
 pvcAutoresizer:
   annotations: {}
       #resize.topolvm.io/increase: 250Gi
 
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
+  fsGroupChangePolicy: OnRootMismatch
 
 EnableSnapshotDatabase: true
 
@@ -101,7 +103,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-enableConfigMapInit: false
+enableConfigMapInit: true
 configPath: "a-config/config/*"
 enablesecretStore: false
 secretStoreRef:
@@ -109,8 +111,4 @@ secretStoreRef:
   name: "bnbchain-secrets"
   kind: "SecretStore"
 service:
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-0224d90d23914fcdd,subnet-0aef1c93b03c50f48,subnet-0b430a213af598038
-    service.beta.kubernetes.io/aws-load-balancer-type: external
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: instance
-    service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+  annotations: {}
