@@ -1,4 +1,4 @@
-# geenfield-validator-charts
+# greenfield-validator-charts
 Helm chart repository for the greenfield-validator
 
 ## To deploy:
