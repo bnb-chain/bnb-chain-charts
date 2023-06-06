@@ -10,6 +10,8 @@ Helm chart repository for the greenfield-validator
 
 Please refer to the `values.yaml` description section in case of any error faced in step 3 above.
 
+Please install this Helm Chart in the directory containing the `a-config-config/` directory. This allows the `ConfigMap` to grab all files and transfer to the right folder in the pod.
+
 Please also ensure you have VMServiceScrape CRD installed in your cluster, else, the helm chart cannot install and deploy the resources below into your cluster.
 
 ## `values.yaml` Description
@@ -18,7 +20,7 @@ Our image is pulled from `ghcr.io/bnb-chain/greenfield`. Using other images coul
 
 Our `storageClassName` is `ebs-sc`, with a `volumeSize` of `500Gi`.
 
-We get the genesis file for greenfield from the `url` stated under `genesisInit`. You have to change the `url` if a new genesis file is uploaded.
+If you are downloading a genesis file for greenfield, put that link in the `url` stated under `genesisInit`. Otherwise, defaults to copying the genesis.json from the `a-config/config` directory.
 
 The `podSecurityContext` and the `securityContext` used help to prevent any internal file system modifications as it prevent root user permissions.
 
