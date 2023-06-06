@@ -31,7 +31,7 @@ spec:
         - configMap:
             defaultMode: 0777
             name: {{ include "gnfd-validator.fullname" . }}-config
-          name: {{ .Release.Name }}-gnfd-validator-config
+          name: gnfd-validator-config
         {{- if .Values.enablesecretStore }}
         - name: private-key
           secret:
@@ -58,13 +58,13 @@ spec:
             wget -O /server/data-seed/config/genesis.json {{ .Values.genesisInit.url }}
             ls -ltr /config-tmp
             cp -rf -L /config-tmp/* /server/data-seed/config || true
-            cp -rf -L /private-key/{{ .Release.Name }}-gnfd-validator-private-key /server/data-seed/config/priv_validator_key.json
+            cp -rf -L /private-key/{{ include "gnfd-validator.fullname" . }}-gnfd-validator-private-key /server/data-seed/config/priv_validator_key.json
             echo '{}' > /server/data-seed/data/priv_validator_state.json || true
             echo "done"
           volumeMounts:
           - name: data
             mountPath: /server
-          - name: {{ .Release.Name }}-gnfd-validator-config
+          - name: gnfd-validator-config
             mountPath: /config-tmp
           {{- if .Values.enablesecretStore }}
           - name: private-key
