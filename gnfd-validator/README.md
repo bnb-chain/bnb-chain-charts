@@ -10,7 +10,7 @@ Helm chart repository for the greenfield-validator
 
 Please refer to the `values.yaml` description section in case of any error faced in step 3 above.
 
-Please install this Helm Chart in the directory containing the `a-config-config/` directory. This allows the `ConfigMap` to grab all files and transfer to the right folder in the pod.
+Please install this Helm Chart in the directory containing the configuration files of the greenfield validator node. This allows the `ConfigMap` to grab all files and transfer to the right folder in the pod. This directory can be changed in the `configPath` as mentioned in the next section.
 
 Please also ensure you have VMServiceScrape CRD installed in your cluster, else, the helm chart cannot install and deploy the resources below into your cluster.
 
@@ -24,7 +24,7 @@ If you are downloading a genesis file for greenfield, put that link in the `url`
 
 The `podSecurityContext` and the `securityContext` used help to prevent any internal file system modifications as it prevent root user permissions.
 
-At the very end, there is an option to `enableConfigMapInit`, this config refers to the `configPath` in the [repo where the genesis document is provided](https://github.com/bnb-chain/bnbchain-gitops/tree/main/apps/gnfd-validator-qa). Change the `configPath` if necessary.
+At the very end, there is an option to `enableConfigMapInit`, this config refers to the `configPath` in the [repo where the configuration documents are provided](https://github.com/bnb-chain/bnbchain-gitops/tree/main/apps/gnfd-validator-qa). Change the `configPath` if necessary.
 
 ## Common Operations
 
