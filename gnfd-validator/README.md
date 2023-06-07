@@ -20,7 +20,7 @@ Our image is pulled from `ghcr.io/bnb-chain/greenfield`. Using other images coul
 
 Our `storageClassName` is `ebs-sc`, with a `volumeSize` of `500Gi`.
 
-If you are downloading a genesis file for greenfield, put that link in the `url` stated under `genesisInit`. Otherwise, defaults to copying the genesis.json from the `a-config/config` directory.
+If you are downloading a genesis file for greenfield, put that link in the `url` stated under `genesisInit`. Otherwise, defaults to copying the genesis.json from the `configPath`'s directory.
 
 The `podSecurityContext` and the `securityContext` used help to prevent any internal file system modifications as it prevent root user permissions.
 
