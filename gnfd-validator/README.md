@@ -10,7 +10,8 @@ Helm chart repository for the greenfield-validator
 
 Please refer to the `values.yaml` description section in case of any error faced in step 3 above.
 
-Please install this Helm Chart in the directory containing the configuration files of the greenfield validator node. This allows the `ConfigMap` to grab all files and transfer to the right folder in the pod. This directory can be changed in the `configPath` as mentioned in the next section.
+Please install this Helm Chart in the root level directory of the configuration files of the greenfield validator node. This allows the `ConfigMap` to grab all files and transfer to the right folder in the pod. This directory can be changed in the `configPath` as mentioned in the next section.
+(I.e. If your configuration files are in `/test/a-config/config`, and the `configPath` is `a-config/config`, install the Helm Chart in the `/test` directory)
 
 Please also ensure you have VMServiceScrape CRD installed in your cluster, else, the helm chart cannot install and deploy the resources below into your cluster.
 
