@@ -24,7 +24,7 @@ storageClassName: "ebs-sc"
 
 genesisInit:
   enabled: true
-  url: "https://raw.githubusercontent.com/bnb-chain/bnbchain-gitops/main/apps/gnfd-fullnode-qa/config/genesis.json?token=GHSAT0AAAAAACCKFFJM72XFB5VLRLN7LPTOZD67ODA"
+  url: ""
 
 # enable ServiceMonitor resources
 enableMonitor: false
@@ -112,3 +112,5 @@ secretStoreRef:
   kind: "SecretStore"
 service:
   annotations: {}
+
+terminationGracePeriodSeconds: 60 

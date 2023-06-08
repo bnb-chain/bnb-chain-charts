@@ -38,7 +38,7 @@ spec:
             defaultMode: 420
             secretName: {{ include "gnfd-validator.fullname" . }}-private-key
         {{- end }}
-      terminationGracePeriodSeconds: 300
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- if .Values.genesisInit.enabled }}
       initContainers:
         - name: init-genesis
@@ -55,7 +55,9 @@ spec:
             fi
             mkdir -p /server/data-seed/data
             mkdir -p /server/data-seed/config
-            wget -O /server/data-seed/config/genesis.json {{ .Values.genesisInit.url }}
+            if [ {{ .Values.genesisInit.url }} != "" ]; then
+              wget -O /server/data-seed/config/genesis.json {{ .Values.genesisInit.url }}
+            fi
             ls -ltr /config-tmp
             cp -rf -L /config-tmp/* /server/data-seed/config || true
             cp -rf -L /private-key/{{ include "gnfd-validator.fullname" . }}-gnfd-validator-private-key /server/data-seed/config/priv_validator_key.json
