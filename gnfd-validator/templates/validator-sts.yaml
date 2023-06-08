@@ -38,7 +38,7 @@ spec:
             defaultMode: 420
             secretName: {{ include "gnfd-validator.fullname" . }}-private-key
         {{- end }}
-      terminationGracePeriodSeconds: 300
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- if .Values.genesisInit.enabled }}
       initContainers:
         - name: init-genesis

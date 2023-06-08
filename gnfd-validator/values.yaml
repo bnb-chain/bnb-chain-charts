@@ -112,3 +112,5 @@ secretStoreRef:
   kind: "SecretStore"
 service:
   annotations: {}
+
+terminationGracePeriodSeconds: 60 

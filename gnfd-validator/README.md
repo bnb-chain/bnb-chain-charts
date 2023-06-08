@@ -27,6 +27,8 @@ The `podSecurityContext` and the `securityContext` used help to prevent any inte
 
 At the very end, there is an option to `enableConfigMapInit`, this config refers to the `configPath` in the [repo where the configuration documents are provided](https://github.com/bnb-chain/bnbchain-gitops/tree/main/apps/gnfd-validator-qa). Change the `configPath` if necessary.
 
+The `terminationGracePeriodSeconds` can be changed to give the pod sufficient time for shutdown.
+
 ## Common Operations
 
 ### Check Pod Status
