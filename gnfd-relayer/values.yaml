@@ -1,0 +1,139 @@
+# Default values for gnfd-relayer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/bnb-chain/greenfield-relayer
+  pullPolicy: Always
+  tag: "0.2.2-alpha.1"
+
+imagePullSecrets: []
+
+containers: {}
+  # command:
+  #   - /bin/sh
+  #   - -c
+  #   - yarn start
+  # env:
+  #   - name: MY_HOST_IP
+  #     valueFrom:
+  #       fieldRef:
+  #         apiVersion: v1
+  #         fieldPath: status.hostIP
+  # logsMountPath: "/usr/src/app/logs"
+  # extraVolumeMounts:
+  #   - name: default-token-vfwwd
+  #     secret:
+  #       defaultMode: 420
+  #       secretName: default-token-vfwwd
+
+initContainers: {}
+  # - command:
+  #   - /bin/sh
+  #   - -c
+  #   - mkdir -p /usr/src/app/logs/${MY_HOST_IP};chmod 777 /usr/src/app/logs/$MY_HOST_IP;
+  #   env:
+  #   - name: MY_HOST_IP
+  #     valueFrom:
+  #       fieldRef:
+  #         apiVersion: v1
+  #         fieldPath: status.hostIP
+  #   image: 172.22.41.103:5000/wallet-bridge
+  #   imagePullPolicy: Always
+  #   name: init
+  #   resources: {}
+  #   securityContext:
+  #     runAsUser: 0
+  #   terminationMessagePath: /dev/termination-log
+  #   terminationMessagePolicy: File
+  #   volumeMounts:
+  #   - mountPath: /usr/src/app/logs
+  #     name: wallet-bridge
+
+logVolume: 
+  type: hostPath
+  name: ""
+
+resources:
+  # requests:
+  #   memory: 2Gi
+
+service:
+  type: ClusterIP
+  # ports:
+  #   - port: 3000
+  #     protocol: TCP
+  #     targetPort: 3000
+
+nodeSelector: {}
+
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+DeploymentAnnotations: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+tolerations: []
+
+affinity: {}
+
+configMapsMountPath: ""
+configMaps: {}
+  # app:
+  #   data: |
+  #     dbURL = admin@admin:3306
+
+# configMaps:
+#   app:
+#     data: |
+#       dbURL = {{ .Values.dbUser }}@{{ .Values.dbPassword }}:{{ .Values.dbPort }}
+
+# statefulset: 
+#   enabled: true
+#   mountPath: /usr/share/nginx/html 
+#   accessModes: ReadWriteOnce
+#   storageClassName: ssd1
+#   storageSize: 4Gi
+statefulset:
+   enabled: false
+
+serviceMonitor:
+  enabled: false
+  monitorPath: /debug/metrics/prometheus

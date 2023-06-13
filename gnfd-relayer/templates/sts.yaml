@@ -1,0 +1,96 @@
+{{- if .Values.statefulset.enabled -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "gnfd-relayer.fullname" . }}
+  labels:
+    {{- include "gnfd-relayer.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "gnfd-relayer.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "gnfd-relayer.fullname" . }}
+  replicas: {{ .Values.replicaCount }} # by default is 1
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gnfd-relayer.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gnfd-relayer.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.containers.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.containers.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.containers.ports }}
+          ports:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.containers.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.containers.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- $releasename := .Release.Name -}}
+            {{- with .Values.containers.logsMountPath }}
+            - mountPath: {{ . }}
+              subPath: {{ $releasename }}
+              name: logs-volume
+            {{- end }}
+            - mountPath: {{ .Values.configMapsMountPath }}
+              name: config-volume
+            - name: data
+              mountPath: {{ .Values.statefulset.mountPath }} 
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        {{- if eq .Values.logVolume.type "efs" }}
+        - persistentVolumeClaim:
+            claimName: {{ .Values.logVolume.name }}
+        {{ else }}
+        - hostPath:
+            path: /mnt/efs
+            type: ''
+        {{- end }}
+          name: logs-volume
+        - configMap:
+            defaultMode: 420
+            name: {{ include "gnfd-relayer.fullname" . }}-configmap
+          name: config-volume      
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ {{ .Values.statefulset.accessModes | quote }} ]
+      storageClassName: {{ .Values.statefulset.storageClassName | quote }} 
+      resources:
+        requests:
+          storage: {{ .Values.statefulset.storageSize }} 
+{{- end }}

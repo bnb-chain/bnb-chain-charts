@@ -1,0 +1,10 @@
+{{- range $nameSuffix, $values := .Values.configMaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.names.fullname" $ }}-configmap
+{{- with $values.data }}
+data:
+  {{- include "common.tplvalues.render" (dict "value" . "context" $) | nindent 2 }}
+{{- end }}
+{{- end }}
