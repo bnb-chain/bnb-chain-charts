@@ -1,0 +1,18 @@
+{{- if .Values.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "gnfd-relayer.fullname" . }}
+spec:
+  endpoints:
+  - interval: 5s
+    path: {{.Values.serviceMonitor.monitorPath}}
+    port: metrics
+    scheme: http
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "gnfd-relayer.selectorLabels" . | nindent 6 }}
+{{- end }}

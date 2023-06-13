@@ -1,0 +1,14 @@
+apiVersion: v2
+name: gnfd-relayer
+description: A Helm chart for dex-app app
+
+type: application
+
+version: 0.0.1
+
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
