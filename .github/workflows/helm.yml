@@ -34,21 +34,21 @@ jobs:
           # Enable debugging of each line of command
           set -x
 
-          # Get the list of files that were modified in the commit
-          files_changed=$(git diff --name-only HEAD~1 HEAD)
-
           # Loop through each chart folder and check if any files in the folder were modified
           for chart_folder in $(ls -d */); do
-            chart_files=$(echo $files_changed | grep -c "^$chart_folder")
+            chart_files=0
+            while IFS= read -r line; do
+              if [[ $line == "$chart_folder"* ]]; then
+                chart_files=1
+                break
+              fi
+            done < <(git diff --name-only HEAD~1 HEAD)
             if [ "$chart_files" -gt "0" ]; then
-              # Print the chart name so we can see which charts were modified
               echo "Modified chart: $chart_folder"
-              # Append the chart name to the list of modified charts
               echo $chart_folder >> modified_charts.txt
             fi
           done
 
-          # Set an output variable with the list of modified charts
           echo "::set-output name=modified_charts::$(cat modified_charts.txt)"
 
       - name: Package charts
