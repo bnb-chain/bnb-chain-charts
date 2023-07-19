@@ -31,6 +31,9 @@ jobs:
         working-directory: main
         id: get_chart_names
         run: |
+          # Enable debugging of each line of command
+          set -x
+
           # Get the list of files that were modified in the commit
           files_changed=$(git diff --name-only HEAD~1 HEAD)
 
