@@ -39,6 +39,8 @@ jobs:
 
           # Loop through each chart folder and check if any files in the folder were modified
           for chart_folder in $(ls -d */); do
+            echo "Files changed: $files_changed"
+            echo "Current chart folder: $chart_folder"
             chart_files=$(echo $files_changed | grep -c "^$chart_folder")
             if [ "$chart_files" -gt "0" ]; then
               # Print the chart name so we can see which charts were modified
