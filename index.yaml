@@ -2,7 +2,7 @@ apiVersion: v1
 entries:
   gnfd-challenger:
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.836633562Z"
+    created: "2023-07-26T04:05:00.340335165Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -17,7 +17,7 @@ entries:
     - gnfd-challenger-0.0.2.tgz
     version: 0.0.2
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.835244348Z"
+    created: "2023-07-26T04:05:00.33847471Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -33,7 +33,7 @@ entries:
     version: 0.0.1
   gnfd-challenger-testnet-values:
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.837006665Z"
+    created: "2023-07-26T04:05:00.340794279Z"
     description: A Helm chart for gnfd-challenger testnet values
     digest: 737eedf1de22f31ea30a62b165dcec554cf5699e4ad0c12ae57065c1b971dd2a
     name: gnfd-challenger-testnet-values
@@ -43,7 +43,22 @@ entries:
     version: 0.0.2
   gnfd-relayer:
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.838329878Z"
+    created: "2023-07-26T04:05:00.344588591Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      tags:
+      - bitnami-common
+      version: 1.x.x
+    description: A Helm chart for gnfd-relayer
+    digest: faabf41abb0cd927a408d0733e93e9f738033de46979c9e9db5c72f90031928c
+    name: gnfd-relayer
+    type: application
+    urls:
+    - gnfd-relayer-0.2.2.tgz
+    version: 0.2.2
+  - apiVersion: v2
+    created: "2023-07-26T04:05:00.342963543Z"
     dependencies:
     - name: common
       repository: https://charts.bitnami.com/bitnami
@@ -59,7 +74,7 @@ entries:
     version: 0.0.1
   gnfd-relayer-testnet-values:
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.838694682Z"
+    created: "2023-07-26T04:05:00.345453417Z"
     description: A Helm chart for gnfd-relayer testnet values for install
     digest: cea3e26927d63d3653dedc6717d375b6d7f0536b611a0cbf06d713f89bbc2892
     name: gnfd-relayer-testnet-values
@@ -69,7 +84,7 @@ entries:
     version: 0.2.2
   gnfd-validator:
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.84354063Z"
+    created: "2023-07-26T04:05:00.351046782Z"
     description: A Helm chart for gnfd validator
     digest: 51f064d6e8bf1ac88abffa0066f0b687f9de25d0056b6eb69c8325cb05e26db0
     name: gnfd-validator
@@ -78,7 +93,7 @@ entries:
     - gnfd-validator-0.0.6.tgz
     version: 0.0.6
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.842865623Z"
+    created: "2023-07-26T04:05:00.350144456Z"
     description: A Helm chart for gnfd validator
     digest: 8ff39e7c68a8fc5953a2b412d0f9e46066e5c57b37b4fa43d7417ad4a5b2c21b
     name: gnfd-validator
@@ -87,7 +102,7 @@ entries:
     - gnfd-validator-0.0.5.tgz
     version: 0.0.5
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.842127816Z"
+    created: "2023-07-26T04:05:00.349075824Z"
     description: A Helm chart for gnfd validator
     digest: ef2541703713563ef0eb3cd3a821b3cb49b8fa7bb94248bec6faab30eef269b6
     name: gnfd-validator
@@ -96,7 +111,7 @@ entries:
     - gnfd-validator-0.0.4.tgz
     version: 0.0.4
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.84149221Z"
+    created: "2023-07-26T04:05:00.348330202Z"
     description: A Helm chart for gnfd validator
     digest: bac2fa82d16c2f2b22867d2ac0b8941a9937fe662ffc95ca696491576c831c20
     name: gnfd-validator
@@ -105,7 +120,7 @@ entries:
     - gnfd-validator-0.0.3.tgz
     version: 0.0.3
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.840634501Z"
+    created: "2023-07-26T04:05:00.34757508Z"
     description: A Helm chart for gnfd validator
     digest: c02e0a1088dac27193aec5793890d4f2bc5cf224589836cb519459a34a0aeb91
     name: gnfd-validator
@@ -114,7 +129,7 @@ entries:
     - gnfd-validator-0.0.2.tgz
     version: 0.0.2
   - apiVersion: v2
-    created: "2023-07-26T04:04:32.839789793Z"
+    created: "2023-07-26T04:05:00.346465247Z"
     description: A Helm chart for gnfd validator
     digest: 69c3087bdb745f54fac17d995f9e9850c27f056bf68cf1cd0907bd2e84dc47eb
     name: gnfd-validator
@@ -122,4 +137,4 @@ entries:
     urls:
     - gnfd-validator-0.0.1.tgz
     version: 0.0.1
-generated: "2023-07-26T04:04:32.833619632Z"
+generated: "2023-07-26T04:05:00.336575254Z"
