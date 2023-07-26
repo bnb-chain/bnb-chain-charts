@@ -1,0 +1,7 @@
+apiVersion: v2
+name: gnfd-challenger-testnet-values
+description: A Helm chart for gnfd-challenger testnet values
+
+type: application
+
+version: 0.0.2
