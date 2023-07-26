@@ -4,7 +4,7 @@ description: A Helm chart for gnfd-relayer application
 
 type: application
 
-version: 0.0.1
+version: 0.2.2
 
 dependencies:
   - name: common
