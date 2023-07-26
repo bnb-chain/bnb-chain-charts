@@ -1,6 +1,6 @@
 apiVersion: v2
 name: gnfd-challenger
-description: A Helm chart for gnfd-challenger
+description: A Helm chart for gnfd-challenger app
 
 type: application
 
