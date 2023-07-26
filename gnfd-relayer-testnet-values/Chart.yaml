@@ -1,6 +1,6 @@
 apiVersion: v2
 name: gnfd-relayer-testnet-values
-description: A Helm chart for gnfd-relayer testnet values
+description: A Helm chart for gnfd-relayer testnet values for install
 
 type: application
 
