@@ -15,7 +15,7 @@ configMaps:
             "private_key": "xxxxx",
             "bls_private_key": "xxxxx",
             "rpc_addrs": [
-              "gnfd-testnet-fullnode-tendermint-us.bnbchain.org"
+              "gnfd-testnet-fullnode-tendermint-us.bnbchain.org:443"
             ],
             "chain_id_string": "greenfield_5600-1",
             "gas_limit": 100000,
