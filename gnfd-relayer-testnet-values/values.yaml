@@ -25,7 +25,7 @@ configMaps:
             "aws_region": "",
             "aws_secret_name": "",
             "rpc_addrs": [
-              "https://data-seed-prebsc-1-s1.bnbchain.org:8545"
+              "https://data-seed-prebsc-1-s1.binance.org:8545"
             ],
             "private_key": "xxxxx",
             "gas_limit": 20000000,
@@ -42,8 +42,8 @@ configMaps:
             "greenfield_event_type_cross_chain": "cosmos.crosschain.v1.EventCrossChain",
             "bsc_cross_chain_package_event_name": "CrossChainPackage",
             "cross_chain_package_event_hex": "0x64998dc5a229e7324e622192f111c691edccc3534bbea4b2bd90fbaec936845a",
-            "cross_chain_contract_addr": "0x57b8A375193b2e9c6481f167BaECF1feEf9F7d4B",
-            "greenfield_light_client_contract_addr": "0x4916f5c0688d058659aFce361E2A8F3F5b75CAd5"
+            "cross_chain_contract_addr": "0xa5B2c9194131A4E0BFaCbF9E5D6722c873159cb7",
+            "greenfield_light_client_contract_addr": "0xa9249cefF9cBc9BAC0D9167b79123b6C7413F50a"
           },
           "vote_pool_config": {
             "broadcast_interval_in_millisecond": 1000,
