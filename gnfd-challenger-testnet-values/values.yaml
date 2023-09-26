@@ -24,6 +24,9 @@ configMaps:
             "no_simulate": true,
             "deduplication_interval": 100
           },
+          "metrics_config": {
+            "port": 8080
+          },
           "log_config": {
             "level": "DEBUG",
             "filename": "",
